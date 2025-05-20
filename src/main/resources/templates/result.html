@@ -9,6 +9,17 @@
 <pre th:text="${content}">File content will appear here</pre>
 <br>
 <pre th:text="${jobDescription}"></pre>
+<br>
+<h2>Match Score: <!--/*@thymesVar id="similarityScore" type=""*/-->
+<span th:text="${similarityScore}"></span></h2>
+
+<h2>Important Missing Keywords</h2>
+<ul>
+    <th:block th:each="keyword : ${missingKeywords}">
+        <li th:text="${keyword}"></li>
+    </th:block>
+</ul>
+
 <a href="/home">Go back</a>
 </body>
 </html>

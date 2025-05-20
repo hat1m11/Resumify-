@@ -1,21 +1,23 @@
 package org.hatim.resumify;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 public class HomeController {
 
     @RequestMapping("/home")
     public String test() {
-        return "index"; // Return the 'index' view when accessing /home
+        return "index";
     }
 
-    @PostMapping("/result") // Handles POST requests to /result
+    @PostMapping("/result")
     public String upload(@RequestParam("file") MultipartFile file,
                          @RequestParam("description") String description,
                          Model model) {
@@ -25,19 +27,33 @@ public class HomeController {
             return "errorPage";
         }
 
-        // Process the file using DocReader
-        DocReader reader = new DocReader();
+        // Read file
+        DocReader reader = new DocReader();  // Ensure this is correct
         String content = reader.importDOC(file);
 
+        // Use WordSimilarity
+        WordSimilarity ws = new WordSimilarity();  // Ensure this is correct
 
+        String cleanContent = ws.cleanText(content);
+        String cleanDescription = ws.cleanText(description);
 
-        JobDescription jobDescription = new JobDescription(description);
+        String[] contentTokens = ws.tokenize(cleanContent);
+        String[] descriptionTokens = ws.tokenize(cleanDescription);
 
-        // Add the content to the model to display in the result page
-        model.addAttribute("content", content);
-        model.addAttribute("jobDescription", jobDescription.getDescription());
+        var resumeTF = ws.calcTermFrequency(contentTokens);
+        var jdTF = ws.calcTermFrequency(descriptionTokens);
+        var idf = ws.calculateIDF(resumeTF, jdTF);
 
-        // Return 'result' view after processing the file
+        double similarity = ws.calculateCosineSimilarity(resumeTF, jdTF, idf);
+
+        TFIDFKeywordExtractor tfIDF = new TFIDFKeywordExtractor();
+        List<String> missingKeywords = tfIDF.getImportantMissingKeywords(cleanContent, cleanDescription, 15);
+
+        model.addAttribute("missingKeywords", missingKeywords);
+        model.addAttribute("content", cleanContent);
+        model.addAttribute("jobDescription", cleanDescription);
+        model.addAttribute("similarityScore", String.format("%.2f", similarity * 100) + "% match");
+
         return "result";
     }
 }

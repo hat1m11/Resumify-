@@ -92,6 +92,6 @@ http://localhost:8080
 
 <h3 align="left">Connect with me</h3>
 <p align="left">
-  <a href="https://www.linkedin.com/in/hatimqazi/" target="_blank" rel="noreferrer">LinkedIn</a> | 
+  <a href="https://www.linkedin.com/in/hatimqazi/](https://www.linkedin.com/in/hatim-qazi-haider-hussain-342b15162/" target="_blank" rel="noreferrer">LinkedIn</a> | 
   <a href="https://github.com/hat1m11" target="_blank" rel="noreferrer">GitHub</a>
 </p>

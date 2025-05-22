@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,7 @@ public class HomeController {
     @PostMapping("/result")
     public String upload(@RequestParam("file") MultipartFile file,
                          @RequestParam("description") String description,
-                         Model model) {
+                         Model model) throws IOException {
 
         if (file.isEmpty() || description.isBlank()) {
             model.addAttribute("message", "Resume or job description is missing.");
@@ -46,8 +47,8 @@ public class HomeController {
 
         double similarity = ws.calculateCosineSimilarity(resumeTF, jdTF, idf);
 
-        TFIDFKeywordExtractor tfIDF = new TFIDFKeywordExtractor();
-        List<String> missingKeywords = tfIDF.getImportantMissingKeywords(cleanContent, cleanDescription, 15);
+        KeywordExtractor wordExtract = new KeywordExtractor();
+        List<String> missingKeywords = (List<String>) wordExtract.getMissingKeywords(cleanContent, cleanDescription, 15);
 
         model.addAttribute("missingKeywords", missingKeywords);
         model.addAttribute("content", cleanContent);

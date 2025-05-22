@@ -1,25 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>File Content</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis Results</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .score-card {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .content-box {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .keyword-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 5px;
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-<h1>Uploaded File Content</h1>
-<pre th:text="${content}">File content will appear here</pre>
-<br>
-<pre th:text="${jobDescription}"></pre>
-<br>
-<h2>Match Score: <!--/*@thymesVar id="similarityScore" type=""*/-->
-<span th:text="${similarityScore}"></span></h2>
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Resume Analysis Results</h1>
 
-<h2>Important Missing Keywords</h2>
-<ul>
-    <th:block th:each="keyword : ${missingKeywords}">
-        <li th:text="${keyword}"></li>
-    </th:block>
-</ul>
+    <div class="score-card text-center">
+        <h4>Text Similarity Score</h4>
+        <p class="display-4 text-primary" th:text="${similarityScore}">85% match</p>
+        <p class="text-muted">Similarity between your resume and the job description</p>
+    </div>
 
-<a href="/home">Go back</a>
+    <div class="mb-4">
+        <h3>Missing Keywords</h3>
+        <p>These keywords were found in the job description but not in your resume:</p>
+        <div>
+            <span th:each="keyword : ${missingKeywords}" class="keyword-tag" th:text="${keyword}">Example</span>
+            <p th:if="${#lists.isEmpty(missingKeywords)}" class="text-success">Great job! No missing keywords detected.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Resume Content</h4>
+            <div class="content-box">
+                <p th:text="${content}">Resume content here...</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h4>Job Description</h4>
+            <div class="content-box">
+                <p th:text="${jobDescription}">Job description here...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5 mb-5">
+        <a href="/home" class="btn btn-primary">Analyze Another Resume</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
